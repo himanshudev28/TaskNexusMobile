@@ -1,113 +1,85 @@
 import React from 'react';
-import { View, ScrollView, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAppStore } from '../../../src/store/app';
+import { useAppStore } from '../../src/store/app';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function DashboardScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const notes = useAppStore((state) => state.notes);
-  const todos = useAppStore((state) => state.todos);
-  const reminders = useAppStore((state) => state.reminders);
-  const transactions = useAppStore((state) => state.transactions);
+  const notes = useAppStore((s) => s.notes);
+  const todos = useAppStore((s) => s.todos);
+  const reminders = useAppStore((s) => s.reminders);
+  const transactions = useAppStore((s) => s.transactions);
 
   const pendingTodos = todos.filter((t) => !t.done).length;
-  const dueReminders = reminders.filter(
-    (r) => !r.done && r.at && r.at <= Date.now()
-  ).length;
-
-  const balance = transactions.reduce(
-    (sum, tx) => sum + (tx.type === 'income' ? tx.amount : -tx.amount),
-    0
-  );
+  const dueReminders = reminders.filter((r) => !r.done && r.at && r.at <= Date.now()).length;
+  const balance = transactions.reduce((sum, tx) => sum + (tx.type === 'income' ? tx.amount : -tx.amount), 0);
 
   const StatCard = ({ label, value, icon, color }: any) => (
-    <View className="flex-1 bg-white rounded-lg p-4 m-2 shadow-sm">
-      <View className="flex-row items-center justify-between">
+    <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 16, padding: 16, margin: 5,
+      shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 6, elevation: 2 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View>
-          <Text className="text-gray-500 text-sm mb-1">{label}</Text>
-          <Text className="text-2xl font-bold text-gray-900">{value}</Text>
+          <Text style={{ color: '#9ca3af', fontSize: 12, marginBottom: 4 }}>{label}</Text>
+          <Text style={{ fontSize: 24, fontWeight: '800', color: '#111' }}>{value}</Text>
         </View>
-        <View className={`w-12 h-12 rounded-lg justify-center items-center`}
-              style={{ backgroundColor: color }}>
-          <Ionicons name={icon} size={24} color="#fff" />
+        <View style={{ width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center', backgroundColor: color }}>
+          <Ionicons name={icon} size={22} color="#fff" />
         </View>
       </View>
     </View>
   );
 
+  const QUICK = [
+    { name: 'Notes', icon: 'document', route: '/(tabs)/notes', color: '#4f46e5' },
+    { name: 'Todos', icon: 'checkmark-circle', route: '/(tabs)/todo', color: '#10b981' },
+    { name: 'Budget', icon: 'wallet', route: '/tools/budget', color: '#ec4899' },
+    { name: 'Timer', icon: 'time', route: '/(tabs)/timer', color: '#f59e0b' },
+    { name: 'Reminders', icon: 'notifications', route: '/tools/reminders', color: '#f43f5e' },
+    { name: 'More Tools', icon: 'apps', route: '/(tabs)/more', color: '#6366f1' },
+  ];
+
   return (
-    <ScrollView
-      className="flex-1 bg-gray-50"
-      contentContainerStyle={{ paddingTop: insets.top }}
-    >
-      <View className="px-4 py-6">
-        <Text className="text-3xl font-bold text-gray-900 mb-6">
-          Welcome back!
-        </Text>
+    <ScrollView style={{ flex: 1, backgroundColor: '#f9fafb' }}
+      contentContainerStyle={{ paddingBottom: 30 }}>
+      {/* Hero */}
+      <View style={{ backgroundColor: '#4f46e5', padding: 24, paddingTop: insets.top + 20 }}>
+        <Text style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14 }}>Welcome back</Text>
+        <Text style={{ color: '#fff', fontSize: 28, fontWeight: '800', marginTop: 4 }}>TaskNexus</Text>
+      </View>
 
-        <View className="flex-row flex-wrap">
-          <StatCard
-            label="Notes"
-            value={notes.length}
-            icon="document"
-            color="#4f46e5"
-          />
-          <StatCard
-            label="Pending Todos"
-            value={pendingTodos}
-            icon="checkmark-circle"
-            color="#10b981"
-          />
+      {/* Stats */}
+      <View style={{ padding: 12 }}>
+        <View style={{ flexDirection: 'row' }}>
+          <StatCard label="Notes" value={notes.length} icon="document" color="#4f46e5" />
+          <StatCard label="Pending Todos" value={pendingTodos} icon="checkmark-circle" color="#10b981" />
         </View>
-
-        <View className="flex-row flex-wrap">
-          <StatCard
-            label="Due Reminders"
-            value={dueReminders}
-            icon="notifications"
-            color="#f59e0b"
-          />
-          <StatCard
-            label="Balance"
-            value={`$${balance.toFixed(0)}`}
-            icon="wallet"
-            color="#ec4899"
-          />
+        <View style={{ flexDirection: 'row' }}>
+          <StatCard label="Due Reminders" value={dueReminders} icon="notifications" color="#f43f5e" />
+          <StatCard label="Balance" value={`$${balance.toFixed(0)}`} icon="wallet" color="#ec4899" />
         </View>
+      </View>
 
-        <Text className="text-lg font-semibold text-gray-900 mt-8 mb-4">
-          Quick Links
-        </Text>
-
-        <View className="flex-row flex-wrap">
-          {[
-            { name: 'Notes', icon: 'document', route: 'notes', color: '#4f46e5' },
-            { name: 'Todos', icon: 'checkmark-circle', route: 'todo', color: '#10b981' },
-            { name: 'Timer', icon: 'time', route: 'timer', color: '#f59e0b' },
-            { name: 'Budget', icon: 'wallet', route: 'more', color: '#ec4899' },
-          ].map((item) => (
-            <TouchableOpacity
-              key={item.name}
-              onPress={() => router.push(`/(tabs)/${item.route}`)}
-              className="w-1/2 p-2"
-            >
-              <View className="bg-white rounded-lg p-4 items-center justify-center">
-                <View
-                  className="w-12 h-12 rounded-lg justify-center items-center mb-2"
-                  style={{ backgroundColor: item.color }}
-                >
-                  <Ionicons name={item.icon as any} size={20} color="#fff" />
-                </View>
-                <Text className="text-sm font-semibold text-gray-900">
-                  {item.name}
-                </Text>
+      {/* Quick Links */}
+      <Text style={{ fontSize: 16, fontWeight: '700', color: '#111', paddingHorizontal: 16, marginTop: 8, marginBottom: 12 }}>
+        Quick Access
+      </Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12 }}>
+        {QUICK.map((item) => (
+          <TouchableOpacity key={item.name} onPress={() => router.push(item.route as any)}
+            style={{ width: '33.33%', padding: 5 }}>
+            <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 14, alignItems: 'center',
+              shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
+              <View style={{ width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center',
+                marginBottom: 8, backgroundColor: item.color }}>
+                <Ionicons name={item.icon as any} size={20} color="#fff" />
               </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+              <Text style={{ fontSize: 11, fontWeight: '600', color: '#374151', textAlign: 'center' }}>{item.name}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
       </View>
     </ScrollView>
   );
