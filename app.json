@@ -1,12 +1,13 @@
 {
   "expo": {
-    "name": "TaskNexus-Mobile",
-    "slug": "TaskNexus-Mobile",
+    "name": "TaskNexus Mobile",
+    "slug": "tasknexus-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tasknexusmobile",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
+    "runtimeVersion": "1.0.0",
     "ios": {
       "icon": "./assets/expo.icon"
     },
