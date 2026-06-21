@@ -35,16 +35,14 @@ jobs:
       - name: 📚 Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: 📦 Install Expo CLI
-        run: npm install -g expo-cli
-
-      - name: 🏢 Prebuild native files
-        run: npx expo prebuild --clean
-
-      - name: 🔨 Build APK with Gradle
-        run: cd android && ./gradlew assembleRelease
+      - name: 🏢 Build APK with Gradle
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew clean assembleRelease
         env:
           JAVA_TOOL_OPTIONS: -Xmx4096m
+          GRADLE_OPTS: -Xmx4096m
 
       - name: 📍 Find APK file
         id: apk
