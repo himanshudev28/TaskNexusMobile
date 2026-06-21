@@ -38,13 +38,14 @@ export default function QuickLinksScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f9fafb', paddingTop: insets.top }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16, paddingBottom: 12,
+        backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb' }}>
         <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 12 }}>
           <Ionicons name="arrow-back" size={24} color="#4f46e5" />
         </TouchableOpacity>
-        <Text style={{ flex: 1, fontSize: 22, fontWeight: '700', color: '#111' }}>Quick Links</Text>
+        <Text style={{ flex: 1, fontSize: 20, fontWeight: '800', color: '#111827' }}>Quick Links</Text>
         <TouchableOpacity onPress={() => setShowModal(true)}>
-          <Ionicons name="add-circle" size={30} color="#4f46e5" />
+          <Ionicons name="add-circle" size={28} color="#4f46e5" />
         </TouchableOpacity>
       </View>
 

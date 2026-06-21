@@ -36,22 +36,33 @@ export default function TodoScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f9fafb', paddingTop: insets.top }}>
-      {/* Header Stats */}
-      <View style={{ backgroundColor: '#4f46e5', padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13 }}>Pending tasks</Text>
-          <Text style={{ color: '#fff', fontSize: 28, fontWeight: '800' }}>{pending}</Text>
+      {/* Header */}
+      <View style={{ backgroundColor: '#4f46e5', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>To-Do</Text>
+          <TouchableOpacity onPress={() => setShowModal(true)}
+            style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 20,
+              paddingHorizontal: 14, paddingVertical: 6, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Ionicons name="add" size={16} color="#fff" />
+            <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>Add</Text>
+          </TouchableOpacity>
         </View>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          {(['all', 'pending', 'done'] as const).map((f) => (
-            <TouchableOpacity key={f} onPress={() => setFilter(f)}
-              style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
-                backgroundColor: filter === f ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)' }}>
-              <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>Pending tasks</Text>
+            <Text style={{ color: '#fff', fontSize: 26, fontWeight: '800' }}>{pending}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 6 }}>
+            {(['all', 'pending', 'done'] as const).map((f) => (
+              <TouchableOpacity key={f} onPress={() => setFilter(f)}
+                style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
+                  backgroundColor: filter === f ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)' }}>
+                <Text style={{ color: '#fff', fontSize: 12, fontWeight: '600' }}>
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </View>
 

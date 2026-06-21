@@ -1,173 +1,127 @@
-# TaskNexus Mobile — React Native + Expo
+# TaskNexus Mobile
 
-A production-ready mobile port of TaskNexus built with **Expo**, **React Native**, and **TypeScript**. All-in-one productivity app with notes, todos, reminders, budget tracking, and more.
+A comprehensive React Native productivity app built with Expo SDK 56, featuring tools for document processing, image manipulation, scheduling, and more.
 
-## 🚀 Quick Start
+## 🎯 Features
+
+### Document Tools
+- **PDF Tools** — Merge, compress, split, organize, and convert PDFs
+  - Combine PDFs and images into single documents
+  - Compress with quality presets or target file size
+  - Extract pages with custom ranges
+  - Organize pages with drag-and-drop
+  - Convert PDFs to images (PNG/JPEG)
+  - Generate images from PDFs with resolution control
+  
+- **PDF Editor** — Annotate and edit PDF documents
+
+### Image Tools
+- **Resize** — Scale images with aspect ratio preservation
+- **Compress** — Reduce file size with quality/target KB controls
+- **Crop Info** — View image metadata and crop ratio presets
+- **Convert** — Change formats (JPEG/PNG) with optional target size
+- **Enhance** — Transform images (flip, rotate)
+- **AI Enhance** — AI-powered image enhancement (Pollinations AI)
+- **Remove BG** — Remove image backgrounds with color options
+- **Blur BG** — Blur background with adjustable intensity
+
+### Productivity Tools
+- **Notes** — Create, search, and organize notes with color-coded cards
+- **To-Do** — Task management with priority levels and filters
+- **Timer** — Timer, stopwatch, and Pomodoro timer modes
+- **Reminders** — Set and manage reminders with notifications
+- **Budget Tracker** — Track income and expenses with balance overview
+
+### 20+ Additional Utilities
+Unit Converter, QR Code Generator, Text Tools, Dev Tools, Generators, DateTime Tools, Quick Links, SEO Tools, Code Editor, JSX Preview, Data Testing, Network Tools, RSS Reader, Signature Pad, and more.
+
+## 🏗️ Architecture
+
+### Tech Stack
+- **Framework**: React Native 0.85.3
+- **Build Tool**: Expo SDK 56 (Bare Workflow)
+- **Navigation**: Expo Router v3 (File-based routing)
+- **State Management**: Zustand (app store)
+- **Animations**: React Native Reanimated
+- **Icons**: Expo Vector Icons (Ionicons)
+
+### Key Technologies
+- **PDF Processing**: pdf-lib.js + PDF.js (CDN)
+- **Image Processing**: expo-image-manipulator
+- **File Storage**: expo-file-system
+- **Document Picking**: expo-document-picker
+- **Media Library**: expo-media-library/legacy
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ and npm
-- Android SDK (Android 10+) OR Xcode (iOS 14+)
+- Node.js 18+
 - Expo CLI: `npm install -g expo-cli`
+- Android SDK or physical Android device
 
-### Setup
+### Installation
 
 ```bash
-# 1. Navigate to project
+git clone https://github.com/himanshudev28/TaskNexusMobile.git
 cd TaskNexus-Mobile
-
-# 2. Install dependencies
 npm install
-
-# 3. Start Expo dev server
-npm start
-
-# 4. Run on Android (requires Android SDK)
-npm run android
-
-# 5. Run on iOS (Mac only)
-npm run ios
-
-# 6. Run on web
-npm run web
 ```
 
-## 📁 Project Structure
-
-```
-TaskNexus-Mobile/
-├── app/                          # Expo Router - route definitions
-│   ├── _layout.tsx              # Root layout (persists state)
-│   └── (tabs)/                  # Bottom tab navigation
-│       ├── _layout.tsx          # Tab navigation shell
-│       ├── dashboard.tsx        # Overview screen
-│       ├── notes.tsx            # Notes management
-│       ├── todo.tsx             # Todo management
-│       ├── timer.tsx            # Timer/stopwatch
-│       └── more.tsx             # Tool grid menu
-├── src/
-│   ├── store/                   # Zustand state management
-│   │   └── app.ts              # Global store (notes, todos, reminders, budget)
-│   ├── features/               # Feature modules (to be built)
-│   ├── components/             # Shared UI components
-│   ├── hooks/                  # Custom hooks
-│   ├── services/               # API & services
-│   ├── types/                  # TypeScript types
-│   ├── utils/                  # Helper functions
-│   └── constants/              # Constants
-├── tailwind.config.js          # NativeWind config
-├── app.json                    # Expo config
-└── package.json
-```
-
-## ✨ Current Features
-
-### Implemented ✅
-- **Dashboard** — Quick overview of all data
-- **Notes** — Full CRUD with persistent storage
-- **Todos** — With priority levels, completion tracking
-- **Timer** — Presets + custom durations
-- **Bottom Tab Navigation** — Quick access
-- **Tool Grid** — Browse 12+ tools
-- **AsyncStorage Persistence** — Auto-save every 3 seconds
-
-### Coming Soon 🚧
-- Budget Tracker
-- Calculator
-- Unit Converter
-- QR Generator
-- Image Tools (resize, crop, compress, remove BG)
-- PDF Tools (combine, compress, edit)
-- Code Editor + JSX Preview
-- Reminders with notifications
-- Settings & theme support
-
-## 🛠 Tech Stack
-
-- **Expo 56** + **React Native 0.85** + **TypeScript**
-- **Zustand** (state) + **AsyncStorage** (persistence)
-- **NativeWind** (Tailwind styling)
-- **Reanimated 4** + **Moti** (animations)
-- **Expo Router** (navigation)
-- **React Hook Form** + **Zod** (forms)
-
-## 📱 Running the App
+### Development
 
 ```bash
-# Development
-npm start            # Start Expo dev server
-npm run android      # Run on Android device/emulator
-npm run ios         # Run on iOS (Mac only)
-npm run web         # Run in web browser
+# Run on Android (development)
+npx expo run:android
 
-# Testing
-npx tsc --noEmit    # Type check
-npm run lint        # Lint code
+# Run on Android (release APK)
+npx expo run:android --variant release
+
+# Run with Metro Bundler
+npx expo start
 ```
 
-## 🏗 Build for Production
+## 📦 Key Dependencies
+
+- `expo`: ^56.0.0
+- `react-native`: ^0.85.3
+- `react-native-reanimated`: ^3.x
+- `expo-router`: ^3.x
+- `zustand`: ^4.x
+- `expo-file-system`: ^16.x (legacy API)
+- `expo-media-library`: ^16.x (legacy API)
+- `expo-image-manipulator`: ^12.x
+
+## 🎨 UI/UX Highlights
+
+- **Responsive Design**: Adapts to all screen sizes
+- **Consistent Spacing**: 16px gutters, 8px component gaps
+- **Smooth Animations**: React Native Reanimated springify effects
+- **Haptic Feedback**: Touch feedback on all interactions
+- **Dark-aware Status Bar**: Transparent status bar with appropriate icon colors
+- **Download Modals**: Clear file save/share options after processing
+
+## 🔧 Build & Release
 
 ```bash
-# APK for Android
-eas build --platform android
+# Production build
+npx expo run:android --variant release
 
-# IPA for iOS
-eas build --platform ios
+# Generated APK location
+android/app/build/outputs/apk/release/app-release.apk
 
-# Both
-eas build --platform all
+# Target SDK: 36 | Min SDK: 24
+# ABI Filter: arm64-v8a
 ```
 
-## 📊 State Management
+## 📝 License
 
-All data lives in Zustand store (`src/store/app.ts`):
+MIT License - Open source and free to use.
 
-```typescript
-// Use in components
-const notes = useAppStore((state) => state.notes);
+## 📧 Contact
 
-// Add data
-useAppStore.getState().addNote({ title: "...", body: "..." });
-
-// Update
-useAppStore.getState().updateTodo(id, { done: true });
-
-// Delete
-useAppStore.getState().deleteNote(id);
-```
-
-Auto-saved to AsyncStorage every 3 seconds.
-
-## 🎨 Styling
-
-Using **NativeWind** (Tailwind for React Native):
-
-```tsx
-<View className="flex-1 bg-gray-50 px-4 py-6">
-  <Text className="text-2xl font-bold">Hello</Text>
-  <TouchableOpacity className="bg-indigo-600 rounded-lg p-4">
-    <Text className="text-white">Press</Text>
-  </TouchableOpacity>
-</View>
-```
-
-## 🚨 Troubleshooting
-
-```bash
-# Clear cache
-expo start --clear
-
-# Full reset
-rm -rf node_modules package-lock.json
-npm install
-
-# Type check
-npx tsc --noEmit
-
-# Check setup
-npx expo doctor
-```
+- GitHub: [@himanshudev28](https://github.com/himanshudev28)
+- Email: 09deepak010@gmail.com
 
 ---
 
-**Status:** MVP Complete, Adding Tools Incrementally  
-**Built:** June 2026
+**Made with ❤️** — Last updated: 2026-06-21

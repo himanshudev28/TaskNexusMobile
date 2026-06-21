@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
+import { WebView } from 'react-native-webview';
 
 const TABS = [
   { id: 'json', label: 'JSON', icon: 'code' },
@@ -19,15 +20,43 @@ const uid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) =>
   return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
 });
 
-const simpleHash = (str: string) => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const chr = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
-    hash |= 0;
+// ─── Color swatches ────────────────────────────────────────────────────────
+const SWATCHES = [
+  '#4f46e5', '#dc2626', '#16a34a', '#d97706', '#0891b2', '#7c3aed',
+];
+
+// ─── SHA WebView HTML ──────────────────────────────────────────────────────
+// Uses SubtleCrypto inside a WebView since React Native doesn't have it.
+const SHA_HTML = `<!DOCTYPE html>
+<html>
+<body>
+<script>
+async function hashText(text, algos) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const results = {};
+  for (const algo of algos) {
+    try {
+      const buf = await crypto.subtle.digest(algo, data);
+      const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+      results[algo] = hex;
+    } catch(e) {
+      results[algo] = 'error: ' + e.message;
+    }
   }
-  return Math.abs(hash).toString(16).padStart(8, '0');
-};
+  window.ReactNativeWebView.postMessage(JSON.stringify(results));
+}
+document.addEventListener('message', function(e) {
+  const text = e.data;
+  hashText(text, ['SHA-1','SHA-256','SHA-512']);
+});
+window.addEventListener('message', function(e) {
+  const text = e.data;
+  hashText(text, ['SHA-1','SHA-256','SHA-512']);
+});
+</script>
+</body>
+</html>`;
 
 export default function DevToolsScreen() {
   const insets = useSafeAreaInsets();
@@ -40,15 +69,22 @@ export default function DevToolsScreen() {
   const [color, setColor] = useState('#4f46e5');
   const [uuids, setUuids] = useState<string[]>([]);
 
+  // Hash state
+  const [hashInput, setHashInput] = useState('');
+  const [hashes, setHashes] = useState<{ 'SHA-1'?: string; 'SHA-256'?: string; 'SHA-512'?: string } | null>(null);
+  const [hashLoading, setHashLoading] = useState(false);
+  const webviewRef = useRef<WebView>(null);
+
   const copy = async (text: string) => {
     await Clipboard.setStringAsync(text);
     Alert.alert('Copied!', '');
   };
 
   const hexToRgb = (hex: string) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
+    const clean = hex.replace('#', '').padEnd(6, '0').slice(0, 6);
+    const r = parseInt(clean.slice(0, 2), 16) || 0;
+    const g = parseInt(clean.slice(2, 4), 16) || 0;
+    const b = parseInt(clean.slice(4, 6), 16) || 0;
     return { r, g, b };
   };
 
@@ -66,6 +102,21 @@ export default function DevToolsScreen() {
       h /= 6;
     }
     return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+  };
+
+  const isValidHex = (hex: string) => /^#[0-9A-Fa-f]{6}$/.test(hex);
+
+  const triggerHash = () => {
+    if (!hashInput.trim()) { Alert.alert('Error', 'Enter some text first'); return; }
+    setHashLoading(true);
+    setHashes(null);
+    webviewRef.current?.injectJavaScript(`
+      (function() {
+        var event = new MessageEvent('message', { data: ${JSON.stringify(hashInput)} });
+        window.dispatchEvent(event);
+      })();
+      true;
+    `);
   };
 
   const renderTab = () => {
@@ -122,18 +173,33 @@ export default function DevToolsScreen() {
           </View>
         );
 
-      case 'color':
-        const { r, g, b } = hexToRgb(color);
-        const { h, s, l } = hexToHsl(color);
+      case 'color': {
+        const safeColor = isValidHex(color) ? color : '#4f46e5';
+        const { r, g, b } = hexToRgb(safeColor);
+        const { h, s, l } = hexToHsl(safeColor);
         return (
           <View style={{ gap: 12 }}>
-            <TextInput value={color} onChangeText={setColor} placeholder="#4f46e5" autoCapitalize="none"
-              style={{ backgroundColor: '#fff', borderRadius: 10, padding: 14, borderWidth: 1, borderColor: '#e5e7eb', fontSize: 16, fontFamily: 'monospace' }} />
-            <View style={{ height: 120, borderRadius: 16, backgroundColor: color, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 20, textShadowColor: 'rgba(0,0,0,0.3)', textShadowRadius: 4 }}>{color}</Text>
+            {/* Large preview swatch */}
+            <View style={{ height: 100, borderRadius: 16, backgroundColor: safeColor,
+              justifyContent: 'center', alignItems: 'center',
+              shadowColor: safeColor, shadowOpacity: 0.5, shadowRadius: 12, elevation: 6 }}>
+              <Text style={{ color: '#fff', fontWeight: '800', fontSize: 22,
+                textShadowColor: 'rgba(0,0,0,0.4)', textShadowRadius: 6 }}>{safeColor.toUpperCase()}</Text>
             </View>
+
+            {/* Preset swatches */}
+            <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
+              {SWATCHES.map((sw) => (
+                <TouchableOpacity key={sw} onPress={() => setColor(sw)}
+                  style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: sw,
+                    borderWidth: color === sw ? 3 : 0, borderColor: '#fff',
+                    shadowColor: sw, shadowOpacity: 0.6, shadowRadius: 6, elevation: 4 }} />
+              ))}
+            </View>
+
+            {/* Color values */}
             {[
-              ['HEX', color],
+              ['HEX', safeColor.toUpperCase()],
               ['RGB', `rgb(${r}, ${g}, ${b})`],
               ['RGBA', `rgba(${r}, ${g}, ${b}, 1)`],
               ['HSL', `hsl(${h}, ${s}%, ${l}%)`],
@@ -141,13 +207,18 @@ export default function DevToolsScreen() {
               <TouchableOpacity key={label} onPress={() => copy(val)}
                 style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
                   backgroundColor: '#fff', borderRadius: 10, padding: 14, borderWidth: 1, borderColor: '#e5e7eb' }}>
-                <Text style={{ color: '#6b7280', fontWeight: '600', width: 50 }}>{label}</Text>
-                <Text style={{ flex: 1, fontFamily: 'monospace', fontSize: 14, color: '#111' }}>{val}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <View style={{ width: 18, height: 18, borderRadius: 4, backgroundColor: safeColor,
+                    borderWidth: 1, borderColor: '#e5e7eb' }} />
+                  <Text style={{ color: '#6b7280', fontWeight: '600', width: 44 }}>{label}</Text>
+                </View>
+                <Text style={{ flex: 1, fontFamily: 'monospace', fontSize: 13, color: '#111', marginLeft: 4 }}>{val}</Text>
                 <Ionicons name="copy" size={16} color="#9ca3af" />
               </TouchableOpacity>
             ))}
           </View>
         );
+      }
 
       case 'uuid':
         return (
@@ -195,22 +266,51 @@ export default function DevToolsScreen() {
       case 'hash':
         return (
           <View style={{ gap: 12 }}>
-            <TextInput value={input} onChangeText={setInput} placeholder="Enter text to hash..." multiline numberOfLines={4}
+            {/* Hidden WebView that performs real SubtleCrypto hashing */}
+            <WebView
+              ref={webviewRef}
+              source={{ html: SHA_HTML }}
+              style={{ height: 0, width: 0, opacity: 0 }}
+              onMessage={(e) => {
+                try {
+                  const data = JSON.parse(e.nativeEvent.data);
+                  setHashes(data);
+                } catch {}
+                setHashLoading(false);
+              }}
+              javaScriptEnabled
+              originWhitelist={['*']}
+            />
+
+            <TextInput value={hashInput} onChangeText={(v) => { setHashInput(v); setHashes(null); }}
+              placeholder="Enter text to hash..." multiline numberOfLines={4}
               style={{ backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e7eb',
                 minHeight: 100, textAlignVertical: 'top' }} />
-            <TouchableOpacity onPress={() => setOutput(simpleHash(input))}
+
+            <TouchableOpacity onPress={triggerHash}
               style={{ backgroundColor: '#4f46e5', borderRadius: 10, padding: 12 }}>
-              <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '600' }}>Generate Hash</Text>
+              <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '600' }}>
+                {hashLoading ? 'Computing...' : 'Generate Hashes'}
+              </Text>
             </TouchableOpacity>
-            <Text style={{ color: '#6b7280', fontSize: 12, textAlign: 'center' }}>
-              Note: Simple hash for dev use. Not cryptographically secure.
-            </Text>
-            {output ? <TouchableOpacity onPress={() => copy(output)}
-              style={{ backgroundColor: '#f0fdf4', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#bbf7d0',
-                flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <Text style={{ flex: 1, fontFamily: 'monospace', fontSize: 16, color: '#111' }}>{output}</Text>
-              <Ionicons name="copy" size={18} color="#16a34a" />
-            </TouchableOpacity> : null}
+
+            {hashes && (
+              <View style={{ gap: 10 }}>
+                {(['SHA-1', 'SHA-256', 'SHA-512'] as const).map((algo) => (
+                  <View key={algo} style={{ backgroundColor: '#f0fdf4', borderRadius: 12, padding: 14,
+                    borderWidth: 1, borderColor: '#bbf7d0' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <Text style={{ fontWeight: '700', color: '#15803d', fontSize: 13 }}>{algo}</Text>
+                      <TouchableOpacity onPress={() => hashes[algo] && copy(hashes[algo]!)}>
+                        <Ionicons name="copy" size={16} color="#16a34a" />
+                      </TouchableOpacity>
+                    </View>
+                    <Text selectable style={{ fontFamily: 'monospace', fontSize: 11, color: '#111',
+                      flexWrap: 'wrap' }}>{hashes[algo] || '–'}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
         );
 
@@ -220,11 +320,12 @@ export default function DevToolsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f9fafb', paddingTop: insets.top }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16, paddingBottom: 12,
+        backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb' }}>
         <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 12 }}>
           <Ionicons name="arrow-back" size={24} color="#4f46e5" />
         </TouchableOpacity>
-        <Text style={{ fontSize: 22, fontWeight: '700', color: '#111' }}>Dev Tools</Text>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: '#111827', flex: 1 }}>Dev Tools</Text>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingHorizontal: 12, marginBottom: 12, flexGrow: 0 }}>

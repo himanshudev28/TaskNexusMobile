@@ -36,6 +36,48 @@ const CATEGORIES: Category[] = [
     { label: 'Gallon', factor: 0.264172 }, { label: 'Fluid Oz', factor: 33.814 },
     { label: 'Cup', factor: 4.22675 }, { label: 'Pint', factor: 2.11338 },
   ]},
+  // base unit: bits
+  { name: 'Data Storage', icon: 'server', base: 'bit', units: [
+    { label: 'Bit', factor: 1 },
+    { label: 'Byte', factor: 0.125 },
+    { label: 'Kilobyte', factor: 0.000125 },
+    { label: 'Megabyte', factor: 1.25e-7 },
+    { label: 'Gigabyte', factor: 1.25e-10 },
+    { label: 'Terabyte', factor: 1.25e-13 },
+    { label: 'Petabyte', factor: 1.25e-16 },
+  ]},
+  // base unit: seconds
+  { name: 'Time', icon: 'time', base: 's', units: [
+    { label: 'Millisecond', factor: 1000 },
+    { label: 'Second', factor: 1 },
+    { label: 'Minute', factor: 1 / 60 },
+    { label: 'Hour', factor: 1 / 3600 },
+    { label: 'Day', factor: 1 / 86400 },
+    { label: 'Week', factor: 1 / 604800 },
+    { label: 'Month', factor: 1 / 2629746 },
+    { label: 'Year', factor: 1 / 31556952 },
+  ]},
+  // base unit: pascal
+  { name: 'Pressure', icon: 'water', base: 'pa', units: [
+    { label: 'Pascal', factor: 1 },
+    { label: 'Kilopascal', factor: 0.001 },
+    { label: 'Bar', factor: 1e-5 },
+    { label: 'PSI', factor: 0.000145038 },
+    { label: 'Atmosphere', factor: 9.8692e-6 },
+    { label: 'mmHg', factor: 0.00750062 },
+    { label: 'Torr', factor: 0.00750062 },
+  ]},
+  // base unit: joules
+  { name: 'Energy', icon: 'flash', base: 'j', units: [
+    { label: 'Joule', factor: 1 },
+    { label: 'Kilojoule', factor: 0.001 },
+    { label: 'Calorie', factor: 0.239006 },
+    { label: 'Kilocalorie', factor: 0.000239006 },
+    { label: 'Watt-hour', factor: 0.000277778 },
+    { label: 'kWh', factor: 2.77778e-7 },
+    { label: 'BTU', factor: 0.000947817 },
+    { label: 'Electronvolt', factor: 6.242e18 },
+  ]},
 ];
 
 export default function ConverterScreen() {
@@ -67,11 +109,12 @@ export default function ConverterScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f9fafb', paddingTop: insets.top }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16, paddingBottom: 12,
+        backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb' }}>
         <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 12 }}>
           <Ionicons name="arrow-back" size={24} color="#4f46e5" />
         </TouchableOpacity>
-        <Text style={{ fontSize: 22, fontWeight: '700', color: '#111' }}>Unit Converter</Text>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: '#111827', flex: 1 }}>Unit Converter</Text>
       </View>
 
       {/* Category Tabs */}

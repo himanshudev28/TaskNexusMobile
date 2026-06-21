@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Modal } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Modal, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppStore } from '../../src/store/app';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function NotesScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const cols = width > 500 ? 3 : 2;
+  const cardW = `${Math.floor(100 / cols)}%` as any;
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -31,6 +34,15 @@ export default function NotesScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f9fafb', paddingTop: insets.top }}>
+      {/* Header */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+        paddingHorizontal: 16, paddingVertical: 12,
+        backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb' }}>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: '#111827' }}>Notes</Text>
+        <TouchableOpacity onPress={() => setShowModal(true)}>
+          <Ionicons name="add-circle" size={28} color="#4f46e5" />
+        </TouchableOpacity>
+      </View>
       {/* Search */}
       <View style={{ padding: 16, paddingBottom: 8 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff',
@@ -53,7 +65,7 @@ export default function NotesScreen() {
         ) : (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
             {filtered.map((note, i) => (
-              <View key={note.id} style={{ width: '47%', backgroundColor: COLORS[i % COLORS.length],
+              <View key={note.id} style={{ width: cardW, backgroundColor: COLORS[i % COLORS.length],
                 borderRadius: 16, padding: 16, position: 'relative',
                 shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
                 <Text style={{ fontWeight: '700', fontSize: 15, color: '#111', marginBottom: 6 }} numberOfLines={2}>

@@ -6,16 +6,18 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
-        headerTitleStyle: { fontSize: 18, fontWeight: '700' },
+        headerShown: false,
         tabBarActiveTintColor: '#4f46e5',
-        tabBarInactiveTintColor: '#8a8a8a',
+        tabBarInactiveTintColor: '#9ca3af',
         tabBarStyle: {
           backgroundColor: '#ffffff',
-          borderTopColor: '#e5e5e5',
+          borderTopColor: '#e5e7eb',
+          borderTopWidth: 1,
           paddingBottom: 8,
-          paddingTop: 8,
+          paddingTop: 6,
+          height: 60,
         },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}
     >
       <Tabs.Screen
