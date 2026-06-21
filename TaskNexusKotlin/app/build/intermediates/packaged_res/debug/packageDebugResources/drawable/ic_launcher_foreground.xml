@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Vault door body: rounded rectangle, safe zone 18–90 -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M26,22 L82,22 A8,8 0 0 1 90,30 L90,86 A8,8 0 0 1 82,94 L26,94 A8,8 0 0 1 18,86 L18,30 A8,8 0 0 1 26,22 Z" />
+
+    <!-- Combination lock outer ring (cx=54, cy=58, r=22) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:pathData="M32,58 A22,22 0 1 0 76,58 A22,22 0 1 0 32,58" />
+
+    <!-- Tick marks at 12/3/6/9 o'clock -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M54,36 L54,42" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M76,58 L70,58" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M54,80 L54,74" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M32,58 L38,58" />
+
+    <!-- Lock dial center (cx=54, cy=58, r=9, filled white) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,58 A9,9 0 1 0 63,58 A9,9 0 1 0 45,58" />
+
+    <!-- Inner dial dot (cx=54, cy=58, r=3, indigo) -->
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M51,58 A3,3 0 1 0 57,58 A3,3 0 1 0 51,58" />
+
+    <!-- Handle bar (right side) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"
+        android:pathData="M80,45 L80,71" />
+
+    <!-- Handle knob top (cx=80, cy=43, r=4.5) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M75.5,43 A4.5,4.5 0 1 0 84.5,43 A4.5,4.5 0 1 0 75.5,43" />
+
+    <!-- Handle knob bottom (cx=80, cy=73, r=4.5) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M75.5,73 A4.5,4.5 0 1 0 84.5,73 A4.5,4.5 0 1 0 75.5,73" />
+
+    <!-- Bolts (left side decorative lines) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M18,40 L24,40" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M18,76 L24,76" />
+
+</vector>
