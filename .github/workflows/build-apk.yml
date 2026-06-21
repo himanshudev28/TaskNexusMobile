@@ -29,25 +29,29 @@ jobs:
 
       - name: 🏗️ Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
 
       - name: 📚 Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: 📦 Install Expo CLI
         run: npm install -g expo-cli
 
-      - name: 🏢 Build Release APK
-        run: echo "yes" | npx expo run:android --variant release || true
+      - name: 🏢 Prebuild native files
+        run: npx expo prebuild --clean
+
+      - name: 🔨 Build APK with Gradle
+        run: cd android && ./gradlew assembleRelease
         env:
           JAVA_TOOL_OPTIONS: -Xmx4096m
-          CI: true
 
       - name: 📍 Find APK file
         id: apk
         run: |
-          APK_PATH=$(find . -name "app-release.apk" -type f 2>/dev/null | head -1)
-          if [ -z "$APK_PATH" ]; then
-            echo "❌ APK not found!"
+          APK_PATH="android/app/build/outputs/apk/release/app-release.apk"
+          if [ ! -f "$APK_PATH" ]; then
+            echo "❌ APK not found at $APK_PATH"
             exit 1
           fi
           echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
