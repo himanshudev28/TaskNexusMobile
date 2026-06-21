@@ -10,7 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+    container:
+      image: reactnativecommunity/react-native-android:latest
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -24,26 +26,14 @@ jobs:
       - name: 📚 Install dependencies
         run: npm install
 
-      - name: 🛠️ Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: 🏗️ Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: 📦 Install Expo CLI
         run: npm install -g expo-cli
-
-      - name: 🔐 Accept Android licenses
-        run: |
-          yes | sdkmanager --licenses || true
 
       - name: 🏢 Build Release APK
         run: npx expo run:android --variant release
         env:
           JAVA_TOOL_OPTIONS: -Xmx4096m
+          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
       - name: 📍 Find APK file
         id: apk
