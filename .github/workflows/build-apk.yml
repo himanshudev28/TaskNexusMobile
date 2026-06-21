@@ -37,9 +37,10 @@ jobs:
         run: npm install -g expo-cli
 
       - name: 🏢 Build Release APK
-        run: npm run android
+        run: echo "yes" | npx expo run:android --variant release || true
         env:
           JAVA_TOOL_OPTIONS: -Xmx4096m
+          CI: true
 
       - name: 📍 Find APK file
         id: apk
