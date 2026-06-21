@@ -120,7 +120,6 @@ MIT License - Open source and free to use.
 ## 📧 Contact
 
 - GitHub: [@himanshudev28](https://github.com/himanshudev28)
-- Email: 09deepak010@gmail.com
 
 ---
 
